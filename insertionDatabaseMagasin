@@ -1,0 +1,63 @@
+-- Sélection de la base de données
+USE magasin;
+GO
+
+-- Insérer des données pour la table Client
+INSERT INTO Client (Nom, Prenom, Email)
+VALUES ('Benslimane', 'Abderraouf', '2706014@collegelacite.ca'),
+       ('Benmachou', 'Amir Eddine Ahmed', '2700130@collegelacite.ca'),
+       ('Chagnon', 'Brandon', '2656156@collegelacite.ca'),
+       ('Perrique', 'Djivens', '2701146@collegelacite.ca'),
+       ('Yousfi', 'Fouzia', '2612568@collegelacite.ca'),
+       ('Tran', 'Huy Nhat', '2614601@collegelacite.ca'),
+       ('Berthe', 'Idrissa', '2703813@collegelacite.ca'),
+       ('Bouvier-Desormeaux', 'Jérémie', '2663880@collegelacite.ca'),
+       ('Lafrance', 'Jonathan', '2699461@collegelacite.ca'),
+       ('Abbas', 'Koceila', '2702934@collegelacite.ca');
+GO
+
+-- Insérer des données pour la table Produit
+INSERT INTO Produit (Nom, Prix)
+VALUES ('Ordinateur portable 14"', 599.99),
+       ('Souris sans fil', 24.99),
+       ('Clavier mécanique', 79.99),
+       ('Écouteurs Bluetooth', 49.99),
+       ('Disque dur externe 1 To', 89.99),
+       ('Câble HDMI 2m', 14.99),
+       ('Tapis de souris', 9.99),
+       ('Adaptateur USB-C', 19.99),
+       ('Webcam HD', 39.99),
+       ('Casque audio avec microphone', 59.99);
+GO
+
+-- Insérer des données pour la table client_log
+INSERT INTO client_log (Id_client, Date_insertion, Description)
+VALUES (1, '2023-04-01 10:00:00', 'Inscription au site'),
+       (2, '2023-04-01 10:30:00', 'Achat d''un ordinateur portable'),
+       (3, '2023-04-01 11:00:00', 'Demande de support technique'),
+       (4, '2023-04-01 12:00:00', 'Ajout d''une adresse de livraison'),
+       (5, '2023-04-01 14:00:00', 'Retour d''un produit'),
+       (6, '2023-04-01 15:00:00', 'Modification du mot de passe'),
+       (7, '2023-04-01 16:00:00', 'Annulation d''une commande'),
+       (8, '2023-04-01 17:00:00', 'Inscription à la newsletter'),
+       (9, '2023-04-01 18:00:00', 'Demande de remboursement'),
+       (10, '2023-04-01 19:00:00', 'Achat d''accessoires');
+GO
+
+
+-- Insérer des données pour la table produit_log
+INSERT INTO produit_log (Id_produit, Date_insertion, Description)
+VALUES (1, '2023-04-01 09:00:00', 'Mise en vente du produit'),
+       (2, '2023-04-01 09:30:00', 'Promotion sur le produit'),
+       (3, '2023-04-01 10:00:00', 'Modification des caractéristiques'),
+       (4, '2023-04-01 10:30:00', 'Rupture de stock'),
+       (5, '2023-04-01 11:00:00', 'Réapprovisionnement'),
+       (6, '2023-04-01 11:30:00', 'Ajout d''avis client'),
+       (7, '2023-04-01 12:00:00', 'Mise à jour de la description'),
+       (8, '2023-04-01 13:00:00', 'Modification du prix'),
+       (9, '2023-04-01 14:00:00', 'Ajout de photos'),
+       (10, '2023-04-01 15:00:00', 'Suppression d''un produit');
+GO
+
+
+
