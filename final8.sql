@@ -238,4 +238,3 @@ GO
 -- Afficher les éléments de la table produit_log
 SELECT * FROM produit_log;
 GO
-

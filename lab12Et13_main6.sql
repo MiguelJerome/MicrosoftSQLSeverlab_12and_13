@@ -11,82 +11,81 @@
 USE magasin;
 GO
 -- Création de la procédure stockée
-CREATE OR ALTER PROCEDURE CreateMagasinDatabaseAndTables
-    @Date_insertion VARCHAR(50),
-    @Description VARCHAR(50),
-    @Prix VARCHAR(50),
-    @Nom VARCHAR(50),
-    @Prenom VARCHAR(50),
-    @Email VARCHAR(50)
+CREATE PROCEDURE CreateMagasinDatabaseAndTables
+            @Date_insertion VARCHAR(50),
+            @Description VARCHAR(50),
+            @Prix VARCHAR(50),
+            @Nom VARCHAR(50),
+            @Prenom VARCHAR(50),
+            @Email VARCHAR(50)
 AS
 BEGIN
     DECLARE @DatabaseName NVARCHAR(50) = 'magasin',
             @ClientTableName NVARCHAR(50) = 'Client',
             @ProduitTableName NVARCHAR(50) = 'Produit',
             @ClientLogTableName NVARCHAR(50) = 'client_log',
-            @ProduitLogTableName NVARCHAR(50) = 'produit_log',
-            @ClientTableSQL NVARCHAR(MAX),
-            @ProduitTableSQL NVARCHAR(MAX),
-            @ClientLogTableSQL NVARCHAR(MAX),
-            @ProduitLogTableSQL NVARCHAR(MAX),
-			@sql NVARCHAR(MAX);
+            @ProduitLogTableName NVARCHAR(50) = 'produit_log';
 
-SET @sql = 'IF DB_ID(''' + @DatabaseName + ''') IS NULL
-BEGIN
-    CREATE DATABASE ' + QUOTENAME(@DatabaseName) + ';
-END';
-
-EXEC sp_executesql @sql;
-
-  IF OBJECT_ID(@ClientTableName, 'U') IS NULL
+    IF DB_ID(@DatabaseName) IS NULL
     BEGIN
-        SET @ClientTableSQL = '
-        CREATE TABLE ' + @ClientTableName + ' (
+        EXEC sp_executesql N'CREATE DATABASE ' + QUOTENAME(@DatabaseName) + N';';
+    END
+
+    -- Use the specified database for creating tables
+    SET @ClientTableSQL = N'USE ' + QUOTENAME(@DatabaseName) + N'; ' + @ClientTableSQL;
+    SET @ProduitTableSQL = N'USE ' + QUOTENAME(@DatabaseName) + N'; ' + @ProduitTableSQL;
+    SET @ClientLogTableSQL = N'USE ' + QUOTENAME(@DatabaseName) + N'; ' + @ClientLogTableSQL;
+    SET @ProduitLogTableSQL = N'USE ' + QUOTENAME(@DatabaseName) + N'; ' + @ProduitLogTableSQL;
+
+   IF OBJECT_ID(@ClientTableName, 'U') IS NULL
+    BEGIN
+        DECLARE @ClientTableSQL NVARCHAR(MAX) = '
+        CREATE TABLE '+@ClientTableName+' (
             Id_client INT IDENTITY(1,1) PRIMARY KEY,
-            ' + QUOTENAME(@Nom) + ' VARCHAR(50) NOT NULL,
-            ' + QUOTENAME(@Prenom) + ' VARCHAR(50) NOT NULL,
-            ' + QUOTENAME(@Email) + ' VARCHAR(320) UNIQUE NOT NULL,
+            '+QUOTENAME(@Nom)+' VARCHAR(50) NOT NULL,
+            '+QUOTENAME(@Prenom)+' VARCHAR(50) NOT NULL,
+            '+QUOTENAME(@Email)+' VARCHAR(320) UNIQUE NOT NULL,
             CONSTRAINT UC_Client UNIQUE (Id_client),
-            CONSTRAINT UC_Email UNIQUE (' + QUOTENAME(@Email) + ')
+            CONSTRAINT UC_Email UNIQUE ('+QUOTENAME(@Email)+')
         );';
-        SET @ClientTableSQL = N'USE ' + QUOTENAME(@DatabaseName) + N'; ' + @ClientTableSQL;
+
         EXEC sp_executesql @ClientTableSQL;
     END
 
-    IF OBJECT_ID(@ProduitTableName, 'U') IS NULL
+   IF OBJECT_ID(@ProduitTableName, 'U') IS NULL
     BEGIN
-        SET @ProduitTableSQL = '
-        CREATE TABLE ' + @ProduitTableName + ' (
+        DECLARE @ProduitTableSQL NVARCHAR(MAX) = '
+        CREATE TABLE '+@ProduitTableName+' (
             Id_produit INT IDENTITY(1,1) PRIMARY KEY,
-            ' + QUOTENAME(@Nom) + ' VARCHAR(50) NOT NULL,
-            ' + QUOTENAME(@Prix) + ' DECIMAL(10,2) NOT NULL CHECK (' + QUOTENAME(@Prix) + ' > 0),
+            '+QUOTENAME(@Nom)+' VARCHAR(50) NOT NULL,
+            '+QUOTENAME(@Prix)+' DECIMAL(10,2) NOT NULL CHECK ('+QUOTENAME(@Prix)+' > 0)
             CONSTRAINT UC_Produit UNIQUE (Id_produit)
         );';
-        SET @ProduitTableSQL = N'USE ' + QUOTENAME(@DatabaseName) + N'; ' + @ProduitTableSQL;
+
         EXEC sp_executesql @ProduitTableSQL;
     END
 
    IF OBJECT_ID(@ClientLogTableName, 'U') IS NULL
 BEGIN
-    SET @ClientLogTableSQL = '
+    DECLARE @ClientLogTableSQL NVARCHAR(MAX) = '
     CREATE TABLE '+@ClientLogTableName+' (
         Id_client INT NOT NULL,
         '+QUOTENAME(@Date_insertion)+' DATETIME NOT NULL,
         '+QUOTENAME(@Description)+' VARCHAR(50) NOT NULL
     );';
-	SET @ClientLogTableSQL = N'USE ' + QUOTENAME(@DatabaseName) + N'; ' + @ClientLogTableSQL;
+
     EXEC sp_executesql @ClientLogTableSQL;
 END
 
 IF OBJECT_ID(@ProduitLogTableName, 'U') IS NULL
     BEGIN
-        SET @ProduitLogTableSQL = '
+        DECLARE @ProduitLogTableSQL NVARCHAR(MAX) = '
         CREATE TABLE '+@ProduitLogTableName+' (
             Id_produit INT NOT NULL,
             '+QUOTENAME(@Date_insertion)+' DATETIME NOT NULL,
             '+QUOTENAME(@Description)+' VARCHAR(50) NOT NULL
         );';
-		SET @ProduitLogTableSQL = N'USE ' + QUOTENAME(@DatabaseName) + N'; ' + @ProduitLogTableSQL;
+
         EXEC sp_executesql @ProduitLogTableSQL;
     END
 END;
